@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=R
+Comment=R software environment for statistical computing and graphics
+Exec=mate-terminal --window -e R
+Icon=rlogo_icon
+Terminal=false
+StartupNotify=false
+Categories=Graphics;Science;Math

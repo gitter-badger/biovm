@@ -1,0 +1,50 @@
+---
+- hosts: all
+  become: yes  # This means that all tasks will be executed with sudo
+  pre_tasks:
+# This requires apt-cacher-ng setup on the host
+#    - name: Add apt-cacher-ng proxy configuration
+#      shell: >-
+#        printf '%s\n' 'Acquire::http::Proxy "http://10.0.2.2:3142";'
+#        >> /etc/apt/apt.conf.d/02proxy
+#      args:
+#        executable: /bin/bash
+#        creates: /etc/apt/apt.conf.d/02proxy
+
+    - name: Configure apt to not install recommended or suggested packages
+      shell: >-
+        printf '%s\n' 'APT::Install-Recommends "0";'
+        'APT::Install-Suggests "0";'
+        >> /etc/apt/apt.conf.d/10norecommends
+      args:
+        executable: /bin/bash
+        creates: /etc/apt/apt.conf.d/10norecommends
+
+    - name: "Create biovm user"
+      user:
+        name: biovm
+        password: "$6$LXXxBtN6$rZ.7lfmJHxhpKY0UZzRXaLRbJUBJ/GOl/EXAN9uZV6cbV0e3J2Qlfw0R07IkE08JCEaA.8DPFw7Ve/liS5KNg/"
+        groups: sudo, vboxsf
+        append: yes
+        shell: /bin/bash
+        
+  roles:
+    - biovm-core
+    - desktop
+    - desktop-config
+    - miniconda
+    - galaxy    
+    - r
+    - docker
+    - cleanup
+        
+    
+        
+      
+      
+    
+
+
+          
+          
+        

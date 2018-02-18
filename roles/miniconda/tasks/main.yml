@@ -1,0 +1,38 @@
+- name: Download Miniconda 3
+  become_user: "{{ user_name }}"
+  get_url:
+    url: "https://repo.continuum.io/miniconda/{{ miniconda_version }}"
+    dest: "/tmp/{{ miniconda_version }}"
+    checksum: "md5:{{ miniconda_md5 }}"
+    mode: u+rx
+
+- name: Install Miniconda 3
+  become_user: "{{ user_name }}"
+  shell: bash "/tmp/{{ miniconda_version }}" -b -p "{{ miniconda_install_path }}"
+  args:
+    creates: "{{ miniconda_install_path }}"
+
+- name: Configure conda channels and cleanup downloaded package cache
+  become_user: "{{ user_name }}"
+  shell: |
+    source {{ miniconda_install_path }}/bin/activate
+    conda config --add channels r
+    conda config --add channels defaults
+    conda config --add channels conda-forge
+    conda config --add channels bioconda
+    conda clean -a -y
+    source deactivate
+  args:
+    executable: /bin/bash
+        
+- name: Setup aliases for activating and deactivating conda environments
+  become_user: "{{ user_name }}"
+  shell: >-
+    printf "%s\n"
+    "# Aliases for activating and deactivating conda environments."
+    "alias st='source {{ miniconda_install_path }}/bin/activate'"
+    "alias dt='source deactivate'"
+    >> ~/.bash_aliases
+  args:
+    executable: /bin/bash
+

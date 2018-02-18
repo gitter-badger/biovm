@@ -1,0 +1,24 @@
+[program:galaxy]
+command         = {{ galaxy_install_dir }}/.venv/bin/uwsgi --virtualenv {{ galaxy_install_dir }}/.venv --ini-paste {{ galaxy_install_dir }}/config/galaxy.ini
+directory       = {{ galaxy_install_dir }}
+autostart       = true
+autorestart     = true
+startsecs       = 10
+user            = {{ user_name }}
+stopsignal      = INT
+
+
+[program:handler]
+command         = {{ galaxy_install_dir }}/.venv/bin/python ./scripts/galaxy-main -c {{ galaxy_install_dir }}/config/galaxy.ini --server-name=handler%(process_num)s --log-file {{ galaxy_install_dir }}/log/handler%(process_num)s.log
+directory       = {{ galaxy_install_dir }}
+process_name    = handler%(process_num)s
+numprocs        = 2
+umask           = 022
+autostart       = true
+autorestart     = true
+startsecs       = 10
+user            = {{ user_name }}
+environment     = VIRTUAL_ENV="{{ galaxy_install_dir }}/.venv",PATH="{{ galaxy_install_dir }}/.venv/bin:%(ENV_PATH)s"
+
+[group:gx]
+programs = galaxy,handler

@@ -1,0 +1,24 @@
+# This assumes apt-cacher-ng was setup as a pre-task from setup.yml
+# - name: Remove APT proxy configuration
+#  command: rm /etc/apt/apt.conf.d/02proxy
+  
+- name: "Add Docker's official GPG key"
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+- name: Add Docker stable repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu
+           xenial stable
+    state: present
+- name: Install Docker
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+- name: Add user to docker group
+  user:
+    name: "{{ user_name }}"
+    state: present
+    groups: docker
+    append: yes

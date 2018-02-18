@@ -1,0 +1,474 @@
+- name: Install pre-requisite software from repositories
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  with_items:
+    - libpython-dev
+    - dconf-cli
+    - dbus
+
+- name: Add user to the vboxsf group
+  user:
+    name: "{{ user_name }}"
+    state: present
+    groups: vboxsf
+    append: yes
+
+- name: "Configure user's terminal prompt (PS1)"
+  become_user: "{{ user_name }}"
+  shell: >-
+    printf '%s\n' '# Terminal prompt configuration'
+    'export PS1="\[\033[38;5;11m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]@\h:\[$(tput sgr0)\]\[\033[38;5;13m\][\w]\[$(tput sgr0)\]\[\033[38;5;15m\]: \[$(tput sgr0)\]"'
+    >> ~/.bashrc
+  args:
+    executable: /bin/bash
+- name: "Install psutil (user) required for dconf module"
+  become_user: "{{ user_name }}"
+  pip:
+    name: psutil
+    extra_args: --user
+
+- name: Configure screensaver
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/screensaver/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  with_items:
+    - { key: "mode", value: "'blank-only'" }
+    - { key: "idle-activation-enabled", value: "false" }
+    - { key: "lock-enabled", value: "false" }
+
+- name: Configure power manager
+  become_user: "{{ user_name }}"
+  dconf:
+    key: /org/mate/power-manager/icon-policy
+    value: "'charge'"
+    state: present
+
+- name: Download Inter UI fonts used for the desktop
+  become_user: "{{ user_name }}"
+  unarchive:
+    src: https://github.com/rsms/inter/releases/download/v2.4/Inter-UI-2.4.zip
+    dest: /tmp
+    remote_src: yes
+
+- name: Move Inter UI fonts to user home directory
+  become_user: "{{ user_name }}"
+  shell: |
+    mkdir -p ~/.fonts
+    mv "/tmp/Inter UI (OTF)/Inter-UI-Regular.otf" ~/.fonts/
+    mv "/tmp/Inter UI (OTF)/Inter-UI-Italic.otf" ~/.fonts/
+    mv "/tmp/Inter UI (OTF)/Inter-UI-Bold.otf" ~/.fonts/
+    mv "/tmp/Inter UI (OTF)/Inter-UI-BoldItalic.otf" ~/.fonts/    
+  args:
+    creates: "/home/{{ user_name }}/.fonts/Inter-UI-Regular.otf"
+
+- name: Configure default appearance
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/desktop/interface/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  with_items:
+    - { key: "font-name", value: "'Inter UI 11'" }
+    - { key: "document-font-name", value: "'Carlito 11'" }
+    - { key: "gtk-color-scheme", value: "'fg_color:#4d4d4d4d4c4c\nbg_color:#f2f2f1f1f0f0\ntext_color:#3c3c3c3c3c3c\nbase_color:#ffffffffffff\nselected_fg_color:#ffffffffffff\nselected_bg_color:#777721216f6f\ntooltip_fg_color:#ffffffffffff\ntooltip_bg_color:#000000000000'" }
+    - { key: "enable-animations", value: "false" }
+    - { key: "gtk-enable-animations", value: "false" }    
+    - { key: "icon-theme", value: "'ubuntu-mono-dark'" }
+    - { key: "monospace-font-name", value: "'Inconsolata Medium 14'" }
+
+- name: Copy default theme
+  become_user: "{{ user_name }}"
+  copy:
+    src: "../files/themes/"
+    dest: "~/.themes"
+    mode: 0755
+    
+- name: Set wallpaper
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/desktop/background/picture-filename"
+    value: "'/usr/share/backgrounds/scott-rock-49527.jpg'"
+    state: present
+    
+- name: Disable dock
+  become_user: "{{ user_name }}"
+  dconf:
+    key: /org/mate/desktop/session/required-components/dock
+    value: "''"
+    state: present
+    
+- name: Configure sound
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/desktop/sound/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "theme-name", value: "'__no_sounds'" }
+    - { key: "event-sounds", value: "false" }
+    
+- name: Configure marco window manager
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/marco/general/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "compositing-manager", value: "true" }
+    - { key: "theme", value: "'Ambiant-MATE'" }
+    - { key: "num-workspaces", value: "1" }
+    - { key: "titlebar-font", value: "'Inter UI Bold 11'" }
+    
+- name: Configure desktop font
+  become_user: "{{ user_name }}"
+  dconf:
+    key: /org/mate/caja/desktop/font
+    value: "'Inter UI 11'"
+    state: present
+
+- name: Configure panel - general settings
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/general/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "default-layout", value: "'redmond'" }
+    - { key: "object-id-list", value: "['menu', 'showdesktopapplet', 'firefox', 'window-list', 'notification-area', 'clock', 'object-0', 'object-1', 'object-2']" }
+    - { key: "toplevel-id-list", value: "['bottom']" }
+
+- name: Configure panel bottom settings
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/toplevels/bottom/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "orientation", value: "'bottom'" }
+    - { key: "size", value: "30" }
+    - { key: "screen", value: "0" }
+    - { key: "y-bottom", value: "0" }
+
+- name: Panel - firefox launcher
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/objects/firefox/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "locked", value: "true" }
+    - { key: "launcher-location", value: "'/usr/share/applications/firefox.desktop'" }
+    - { key: "menu-path", value: "'applications:/'" }
+    - { key: "position", value: "72" }
+    - { key: "object-type", value: "'launcher'" }
+    - { key: "toplevel-id", value: "'bottom'" }
+
+- name: Panel - clock
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/objects/clock/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "applet-iid", value: "'ClockAppletFactory::ClockApplet'" }
+    - { key: "locked", value: "true" }
+    - { key: "panel-right-stick", value: "true" }    
+    - { key: "toplevel-id", value: "'bottom'" }
+    - { key: "position", value: "0" }
+    - { key: "object-type", value: "'applet'" }
+    - { key: "panel-right-stick", value: "true" }
+    
+- name: Panel - clock preferences
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/objects/clock/prefs/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "expand-locations", value: "false" }
+    - { key: "format", value: "'24-hour'" }
+
+- name: Panel - window list
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/objects/window-list/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "applet-iid", value: "'WnckletFactory::WindowListApplet'" }
+    - { key: "locked", value: "true" }
+    - { key: "toplevel-id", value: "'bottom'" }
+    - { key: "position", value: "144" }
+    - { key: "object-type", value: "'applet'" }
+
+- name: Panel - notification area
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/objects/notification-area/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "applet-iid", value: "'NotificationAreaAppletFactory::NotificationArea'" }
+    - { key: "locked", value: "true" }
+    - { key: "toplevel-id", value: "'bottom'" }
+    - { key: "position", value: "10" }
+    - { key: "object-type", value: "'applet'" }
+    - { key: "panel-right-stick", value: "true" }
+
+- name: Panel - show desktop applet
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/objects/showdesktopapplet/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "applet-iid", value: "'WnckletFactory::ShowDesktopApplet'" }
+    - { key: "locked", value: "true" }
+    - { key: "toplevel-id", value: "'bottom'" }
+    - { key: "position", value: "24" }
+    - { key: "object-type", value: "'applet'" }
+
+- name: Panel - pluma launcher
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/objects/object-0/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "locked", value: "true" }
+    - { key: "launcher-location", value: "'/usr/share/applications/pluma.desktop'" }
+    - { key: "toplevel-id", value: "'bottom'" }
+    - { key: "position", value: "96" }
+    - { key: "object-type", value: "'launcher'" }
+    - { key: "panel-right-stick", value: "false" }
+
+- name: Panel - mate terminal launcher
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/objects/object-1/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "locked", value: "true" }
+    - { key: "launcher-location", value: "'/usr/share/applications/mate-terminal.desktop'" }
+    - { key: "toplevel-id", value: "'bottom'" }
+    - { key: "position", value: "48" }
+    - { key: "object-type", value: "'launcher'" }
+    - { key: "panel-right-stick", value: "false" }
+
+- name: Panel - menu
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/objects/menu/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "locked", value: "true" }
+    - { key: "toplevel-id", value: "'bottom'" }
+    - { key: "position", value: "0" }
+    - { key: "object-type", value: "'menu'" }
+
+- name: Panel - caja
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/panel/objects/object-2/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "locked", value: "true" }
+    - { key: "launcher-location", value: "'/usr/share/applications/caja-browser.desktop'" }
+    - { key: "toplevel-id", value: "'bottom'" }
+    - { key: "position", value: "120" }
+    - { key: "object-type", value: "'launcher'" }
+    - { key: "panel-right-stick", value: "false" }
+
+
+- name: Configure terminal profile
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/terminal/profiles/base-16-tomorrow-dark/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present    
+  with_items:
+    - { key: "allow-bold", value: "false" }
+    - { key: "background-color", value: "'#1D1D1F1F2121'" }
+    - { key: "palette", value: "'#1D1D1F1F2121:#CCCC66666666:#B5B5BDBD6868:#F0F0C6C67474:#8181A2A2BEBE:#B2B29494BBBB:#8A8ABEBEB7B7:#C5C5C8C8C6C6:#969698989696:#CCCC66666666:#B5B5BDBD6868:#F0F0C6C67474:#8181A2A2BEBE:#B2B29494BBBB:#8A8ABEBEB7B7:#FFFFFFFFFFFF'" }
+    - { key: "bold-color", value: "'#C5C5C8C8C6C6'" }
+    - { key: "foreground-color", value: "'#C5C5C8C8C6C6'" }
+    - { key: "visible-name", value: "'Base 16 Tomorrow Dark'" }
+    - { key: "use-theme-colors", value: "false" }
+    - { key: "use-theme-background", value: "false" }
+    - { key: "bold-color-same-as-fg", value: "true" }
+
+- name: Set default terminal profile
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/terminal/global/{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  with_items:
+    - { key: "default-profile", value: "'base-16-tomorrow-dark'" }
+    - { key: "profile-list", value: "['default', 'base-16-tomorrow-dark']" }
+
+- name: Configure pluma
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/mate/pluma/color-scheme"
+    value: "'classic'"
+    state: present
+
+- name: Set RStudio fixed width font to Inconsolata
+  become_user: "{{ user_name }}"
+  copy:
+    src: ../files/desktop.ini
+    dest: ~/.config/RStudio/
+    mode: 0644
+
+- name: Disable UGENE update check
+  become_user: "{{ user_name }}"
+  copy:
+    src: ../files/UGENE.ini
+    dest: ~/.config/Unipro/
+    mode: 0644
+
+- name: Copy IPython shortcut (launch in Mate terminal by default)
+  become_user: "{{ user_name }}"
+  copy:
+    src: "../files/applications/ipython3.desktop"
+    dest: ~/.local/share/applications/
+    mode: 0644
+
+- name: Clone documentation from Github
+  become_user: "{{ user_name }}"
+  git:
+    repo: https://github.com/vimalkvn/biovm-help.git
+    dest: "~/Documents/biovm-help"
+
+- name: Checkout the gh-pages branch of documentation
+  become_user: "{{ user_name }}"
+  shell: |
+    cd ~/Documents/biovm-help
+    git checkout gh-pages
+
+- name: Create Desktop directory
+  become_user: "{{ user_name }}"
+  file:
+    path: "/home/{{ user_name }}/Desktop"
+    state: directory
+    mode: 0755
+    
+- name: Copy BioVM help shortcuts
+  become_user: "{{ user_name }}"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: "../files/applications/biovm-help.desktop.j2", dest: "~/.local/share/applications/biovm-help.desktop" }
+    - { src: "../files/applications/biovm-help.desktop.j2", dest: "~/Desktop/biovm-help.desktop" }
+
+- name: Create an alias for updating biovm-help document
+  become_user: "{{ user_name }}"  
+  shell: >-
+    printf "%s\n"
+    "# Alias for updating the biovm-help document."
+    "alias update-biovm-help='cd ~/Documents/biovm-help && git pull && cd \$OLDPWD'"
+    >> ~/.bash_aliases
+
+- name: Copy menu entry for the Bioinformatics category
+  become_user: "{{ user_name }}"
+  copy:
+    src: "../files/desktop-directories"
+    dest: "~/.local/share"
+    mode: 0755
+
+- name: Create config/menus directory
+  become_user: "{{ user_name }}"
+  file:
+    path: "~/.config/menus"
+    state: directory
+    mode: 0755
+
+- name: Copy menu configuration
+  become_user: "{{ user_name }}"
+  copy:
+    src: "../files/menus/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: "mate-applications.menu", dest: "~/.config/menus/mate-applications.menu" }
+    - { src: "mate-settings.menu", dest: "~/.config/menus/mate-settings.menu" }
+
+- name: Copy profile picture
+  become_user: "{{ user_name }}"
+  copy:
+    src: "../files/face"
+    dest: "~/.face"
+    mode: 0644
+    
+- name: Disable autostart applications
+  become_user: "{{ user_name }}"
+  copy:
+    src: ../files/autostart/
+    dest: ~/.config/autostart/
+
+- name: Create Programs/bin directory
+  become_user: "{{ user_name }}"
+  file:
+    path: "~/Programs/bin"
+    state: directory
+    mode: 0755
+
+- name: Add Programs/bin to PATH
+  become_user: "{{ user_name }}"
+  shell: >-
+    printf "%s\n" "# Note: ~/Programs/bin is added to the PATH"
+    "export PATH=~/Programs/bin:$PATH" >> ~/.bashrc
+  args:
+    executable: /bin/bash
+
+- name: Add PERL local lib configuration for user
+  become_user: "{{ user_name }}"
+  shell: >-
+    printf '%s\n'
+    'eval "$(perl -Mlocal::lib={{ perl_local_lib_path }})"'
+    >> ~/.bashrc
+  args:
+    executable: /bin/bash
+
+- name: Create directory for BLAST databases
+  become_user: "{{ user_name }}"
+  file:
+    path: "~/databases/blast"
+    state: directory
+    mode: 0755
+
+- name: Add a Readme file for BLAST databases
+  become_user: "{{ user_name }}"    
+  shell: >-
+    printf "%s\n" "This directory is to store BLAST databases"
+    "downloaded from NCBI or created using makeblastdb or"
+    "formatdb." > ~/databases/blast/README
+  args:
+    executable: /bin/bash
+    creates: "~/databases/blast/README"
+
+- name: Remove cloud image grub settings
+  file:
+    path: /etc/default/grub.d/50-cloudimg-settings.cfg
+    state: absent
+
+- name: Copy custom grub config to enable splash screen
+  copy:
+    src: ../files/50-biovm-grub.cfg
+    dest: /etc/default/grub.d/50-biovm-grub.cfg
+    mode: 0644
+
+- name: Update grub
+  command: update-grub
+
+    

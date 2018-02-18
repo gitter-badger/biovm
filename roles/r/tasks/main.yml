@@ -1,0 +1,48 @@
+---
+- name: Install R base and devel, BiocInstaller
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - r-base
+    - r-base-dev
+    - r-bioc-biocinstaller
+
+- name: Download RStudio Debian package
+  get_url:
+    url: "https://download1.rstudio.org/{{ rstudio_version }}"
+    dest: "/tmp/{{ rstudio_version }}"
+    checksum: "md5:{{ rstudio_md5 }}"
+
+- name: Install RStudio
+  apt:
+    deb: "/tmp/{{ rstudio_version }}"
+
+- name: Setup local user directory for R packages
+  become_user: "{{ user_name }}"  
+  file:
+   path: "{{ r_local_lib_path }}"
+   state: directory
+   mode: 0755
+
+- name: Copy Rprofile
+  become_user: "{{ user_name }}"  
+  copy:
+    src: ../files/Rprofile
+    dest: "/home/{{ user_name }}/.Rprofile"
+    mode: 0644
+
+- name: Copy Renviron
+  become_user: "{{ user_name }}"  
+  copy:
+    src: ../files/Renviron
+    dest: "/home/{{ user_name }}/.Renviron"
+    mode: 0644
+
+- name: Launch R in  Mate terminal instead of xterm
+  become_user: "{{ user_name }}"
+  copy:
+    src: "../files/R.desktop"
+    dest: ~/.local/share/applications/
+    mode: 0644
+...

@@ -1,0 +1,30 @@
+<VirtualHost *:80>
+     ServerName localhost
+     ErrorLog ${APACHE_LOG_DIR}/galaxy-error.log
+     CustomLog ${APACHE_LOG_DIR}/galaxy-access.log combined
+
+     RewriteEngine On
+     RewriteRule ^/galaxy/static/style/(.*) /home/{{ user_name }}/Programs/galaxy/static/june_2007_style/blue/$1 [L]
+     RewriteRule ^/galaxy/static/scripts/(.*) /home/{{ user_name }}/Programs/galaxy/static/scripts/packed/$1 [L]
+     RewriteRule ^/galaxy/static/(.*) /home/{{ user_name }}/Programs/galaxy/static/$1 [L]
+     RewriteRule ^/galaxy/favicon.ico /home/{{ user_name }}/Programs/galaxy/static/favicon.ico [L]
+     RewriteRule ^/galaxy/robots.txt /home/{{ user_name }}/Programs/galaxy/static/robots.txt [L]
+     ProxyPass /galaxy uwsgi://127.0.0.1:4001/
+
+ <Location "/galaxy">
+     # Compress all uncompressed content.
+     SetOutputFilter DEFLATE
+     SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+     SetEnvIfNoCase Request_URI \.(?:t?gz|zip|bz2)$ no-gzip dont-vary
+     SetEnvIfNoCase Request_URI /history/export_archive no-gzip dont-vary
+     XSendFile on
+     XSendFilePath /
+ </Location>
+
+ <Location "/galaxy/static">
+     # Allow browsers to cache everything from /galaxy/static for 6 hours
+     Require all granted
+     ExpiresActive On
+     ExpiresDefault "access plus 6 hours"
+ </Location>
+</VirtualHost>

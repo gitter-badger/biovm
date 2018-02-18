@@ -1,0 +1,142 @@
+<!DOCTYPE Menu
+  PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
+  'http://standards.freedesktop.org/menu-spec/menu-1.0.dtd'>
+<Menu>
+	<Name>Desktop</Name>
+	<MergeFile type="parent">/etc/xdg/menus/mate-settings.menu</MergeFile>
+	<Menu>
+		<Name>Preferences</Name>
+		<Include>
+			<Filename>Additional Drivers.desktop</Filename>
+		</Include>
+		<Menu>
+			<Name>Hardware</Name>
+			<Exclude>
+				<Filename>software-properties-drivers.desktop</Filename>
+			</Exclude>
+			
+			<Exclude>
+				<Filename>mate-display-properties.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>mate-keyboard.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>mate-keybinding.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>mate-settings-mouse.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>mate-volume-control.desktop</Filename>
+			</Exclude>
+		</Menu>
+		<Include>
+			<Filename>mate-display-properties.desktop</Filename>
+		</Include>
+		
+		<Include>
+			<Filename>mate-keyboard.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mate-keybinding.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mate-settings-mouse.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mate-volume-control.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mate-network-properties.desktop</Filename>
+		</Include>
+		<Menu>
+			<Name>Internet and Network</Name>
+			<Exclude>
+				<Filename>mate-network-properties.desktop</Filename>
+			</Exclude>
+			
+		</Menu>
+		<Include>
+			<Filename>mate-appearance-properties.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mozo.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mate-tweak.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mate-notification-properties.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mate-window-properties.desktop</Filename>
+		</Include>
+		<Menu>
+			<Name>Look and Feel</Name>
+			<Exclude>
+				<Filename>mate-window-properties.desktop</Filename>
+			</Exclude>
+			
+			<Exclude>
+				<Filename>mate-notification-properties.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>mate-tweak.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>mate-appearance-properties.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>mozo.desktop</Filename>
+			</Exclude>
+		</Menu>
+		<Menu>
+			<Name>Other</Name>
+			<Exclude>
+				<Filename>openjdk-8-policytool.desktop</Filename>
+			</Exclude>
+			
+		</Menu>
+		<Include>
+			<Filename>mate-about-me.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mate-at-properties.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>caja-file-management-properties.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>language-selector.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mate-default-applications-properties.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>mate-session-properties.desktop</Filename>
+		</Include>
+		<Menu>
+			<Name>Personal</Name>
+			<Exclude>
+				<Filename>mate-session-properties.desktop</Filename>
+			</Exclude>
+			
+			<Exclude>
+				<Filename>mate-default-applications-properties.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>language-selector.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>caja-file-management-properties.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>mate-at-properties.desktop</Filename>
+			</Exclude>
+			<Exclude>
+				<Filename>mate-about-me.desktop</Filename>
+			</Exclude>
+		</Menu>
+	</Menu>
+</Menu>

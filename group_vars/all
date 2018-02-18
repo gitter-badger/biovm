@@ -1,0 +1,22 @@
+---
+# global variables are defined here
+
+user_name: biovm
+
+# RStudio for Ubuntu 16.04, 64-bit
+rstudio_version: rstudio-xenial-1.1.419-amd64.deb
+rstudio_md5: a090284b0401c7d8bbc474f227342932
+
+# Miniconda3, 64-bit
+miniconda_version: Miniconda3-4.3.31-Linux-x86_64.sh
+miniconda_md5: 7fe70b214bee1143e3e3f0467b71453c
+miniconda_install_path: "/home/{{ user_name }}/Programs/miniconda3"
+
+# Directory for PERL 5 local packages (locallib)
+perl_local_lib_path: "/home/{{ user_name }}/Programs/perl5"
+
+# Directory for local R packages
+r_local_lib_path: "/home/{{ user_name }}/Programs/R"
+
+# Galaxy install location
+galaxy_install_dir: "/home/{{ user_name }}/Programs/galaxy"

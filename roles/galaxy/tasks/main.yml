@@ -1,0 +1,100 @@
+- name: Install required packages - PostgreSQL, Apache xsendfile
+        and uwsgi proxy modules
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apache2
+    - git
+    - libapache2-mod-xsendfile
+    - libapache2-mod-proxy-uwsgi
+    - libpq-dev
+    - postgresql 
+    - postgresql-client
+    - supervisor
+    - virtualenv
+
+- name: Enable required apache2 modules
+  command: a2enmod expires headers proxy_http proxy_uwsgi rewrite xsendfile
+
+- name: Get list of databases
+  become_user: postgres
+  command: psql -l
+  register: pg_databases
+
+- name: Get list of database users
+  become_user: postgres
+  command: psql -c "\dg"
+  register: pg_users
+
+- name: Create database user
+  become_user: postgres
+  command: "createuser {{ user_name }}"
+  when: pg_users.stdout.find("{{ user_name}}") == -1
+
+- name: Create galaxy database
+  become_user: postgres
+  command: "createdb -O {{ user_name }} galaxy"
+  when: pg_databases.stdout.find("galaxy") == -1
+
+- name: Copy Apache2 Galaxy configuration
+  template:
+    src: ../files/galaxy-apache.conf.j2
+    dest: /etc/apache2/sites-available/galaxy.conf
+    mode: 0644
+    force: no
+
+- name: Enable Galaxy site
+  command: a2ensite galaxy
+
+- name: Clone latest release of Galaxy
+  become_user: "{{ user_name }}"
+  git:
+    repo: "https://github.com/galaxyproject/galaxy.git"
+    dest: "{{ galaxy_install_dir }}"
+    version: release_17.09
+    depth: 1
+
+- name: Create directory for Galaxy uwsgi and handler log files
+  become_user: "{{ user_name }}"
+  file:
+    path: "{{ galaxy_install_dir }}/log"
+    state: directory
+    mode: 0755
+
+- name: Copy sample configuration for Galaxy
+  become_user: "{{ user_name }}"
+  template:
+    src: ../files/galaxy.ini.j2
+    dest: "{{ galaxy_install_dir }}/config/galaxy.ini"
+    mode: 0644
+    force: no
+
+- name: Copy sample job configuration for Galaxy
+  become_user: "{{ user_name }}"
+  template:
+    src: ../files/job_conf.xml
+    dest: "{{ galaxy_install_dir }}/config/job_conf.xml"
+    mode: 0644
+    force: no
+
+- name: Create virtualenv, install dependencies and initialise database
+  become_user: "{{ user_name }}"
+  shell: |
+    cd {{ galaxy_install_dir }}
+    virtualenv -p /usr/bin/python2 .venv
+    source .venv/bin/activate
+    PYTHONPATH= sh scripts/common_startup.sh --no-create-venv
+    sh create_db.sh
+  args:
+    creates: "{{ galaxy_install_dir }}/.venv"
+    executable: /bin/bash
+    
+- name: Copy Supervisor Galaxy configuration
+  template:
+    src: ../files/galaxy-supervisor.conf.j2
+    dest: /etc/supervisor/conf.d/galaxy.conf
+    mode: 0644
+
+- name: Disable supervisor on boot. Has to be enabled manually
+  command: systemctl disable supervisor

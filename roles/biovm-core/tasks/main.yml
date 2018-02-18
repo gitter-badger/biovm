@@ -1,0 +1,60 @@
+- name: Install pre-requisite software from repositories
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  with_items:
+    - apache2
+    - libcgi-pm-perl
+    
+- name: Install Bioinformatics software from repositories
+  apt:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - bedtools
+    - bioperl
+    - bowtie2
+    - bwa
+    - clustalo
+    - embassy-domainatrix
+    - embassy-domalign
+    - embassy-domsearch
+    - embassy-phylip
+    - emboss
+    - emboss-explorer
+    - fastqc
+    - fastx-toolkit         
+    - jemboss
+    - mummer
+    - muscle
+    - ncbi-blast+
+    - primer3
+    - python3-biopython
+    - python3-biopython-sql
+    - python3-cutadapt
+    - python3-matplotlib
+    - python3-scipy
+    - samtools
+    - tophat
+    - treeviewx
+    - trimmomatic
+
+- name: Add ppa repository of UGENE
+  apt_repository:
+    repo: "ppa:iefremov/ppa"
+    state: present
+    update_cache: yes
+    
+- name: Install latest version of UGENE from ppa
+  apt:
+    name: ugene
+    state: latest
+  
+- name: Enable the Apache cgid module required for EMBOSS-explorer
+  command: a2enmod cgid
+  notify:
+    - restart apache
+
+
+

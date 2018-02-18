@@ -1,0 +1,52 @@
+#
+# NOTE: This is the main configuration file for the BioVM
+# instance of Galaxy. 
+# Only variables required for this instance are set here.
+# For detailed information on these and other supported
+# variables, please refer to the galaxy.ini.sample file located
+# in this directory.
+#
+#
+# ---- HTTP Server ----------------------------------------------------------
+[uwsgi]
+processes = 2
+threads = 2
+socket = 127.0.0.1:4001
+pythonpath = lib
+logto = /home/{{ user_name }}/Programs/galaxy/log/uwsgi.log
+master = True
+
+# ---- Filters --------------------------------------------------------------
+[filter:proxy-prefix]
+use = egg:PasteDeploy#prefix
+prefix = /galaxy
+
+# ---- Galaxy ---------------------------------------------------------------
+[app:main]
+paste.app_factory = galaxy.web.buildapp:app_factory
+filter-with = proxy-prefix
+cookie_path = /galaxy
+
+database_connection = postgresql:///galaxy?host=/var/run/postgresql
+database_engine_option_server_side_cursors = True
+
+conda_prefix = {{ miniconda_install_path }}
+conda_auto_install = True
+
+use_nglims = False
+nglims_config_file = tool-data/nglims.yaml
+
+static_enabled = False
+apache_xsendfile = True
+use_interactive = False
+
+# Administrative users - set this to a comma-separated list of valid Galaxy
+# users (email addresses).  These users will have access to the Admin section
+# of the server, and will have access to create users, groups, roles,
+# libraries, and more.  For more information, see:
+#   https://galaxyproject.org/admin/
+#admin_users = None
+
+job_config_file = config/job_conf.xml
+track_jobs_in_database = True
+

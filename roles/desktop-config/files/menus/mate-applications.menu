@@ -1,0 +1,60 @@
+<!DOCTYPE Menu
+  PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
+  'http://standards.freedesktop.org/menu-spec/menu-1.0.dtd'>
+<Menu>
+	<Name>Applications</Name>
+	<MergeFile type="parent">/etc/xdg/menus/mate-applications.menu</MergeFile>
+	<DefaultLayout inline="false"/>
+	<Menu>
+		<Name>mozo-made</Name>
+		<Directory>mozo-made.directory</Directory>
+		<Include>
+			<Filename>emboss-explorer.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>biovm-help.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>ugene.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>treeviewx.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>jemboss.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>fastqc.desktop</Filename>
+		</Include>
+	</Menu>
+	<Menu>
+		<Name>Education</Name>
+		<Exclude>
+			<Filename>emboss-explorer.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>jemboss.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>treeviewx.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>ugene.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>libreoffice-math.desktop</Filename>
+		</Exclude>
+	</Menu>
+	<Menu>
+		<Name>Graphics</Name>
+		<Exclude>
+			<Filename>R.desktop</Filename>
+		</Exclude>
+	</Menu>
+	<Menu>
+		<Name>Development</Name>
+		<Include>
+			<Filename>R.desktop</Filename>
+		</Include>
+	</Menu>
+</Menu>

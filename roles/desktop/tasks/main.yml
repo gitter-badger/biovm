@@ -1,0 +1,98 @@
+---
+- name: Install Ubuntu MATE and system utilities
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - atril
+    - bash-completion
+    - build-essential
+    - checkinstall
+    - command-not-found
+    - command-not-found-data
+    - cpanminus
+    - dmz-cursor-theme
+    - engrampa
+    - eom
+    - firefox
+    - fonts-crosextra-caladea
+    - fonts-crosextra-carlito
+    - fonts-inconsolata
+    - galculator
+    - gdebi
+    - git
+    - git-gui
+    - gitk
+    - gksu
+    - gnome-icon-theme
+    - gnome-keyring
+    - gucharmap
+    - htop
+    - ipython3
+    - ipython3-notebook
+    - liblocal-lib-perl
+    - libreoffice-writer
+    - libreoffice-calc
+    - lightdm
+    - lightdm-gtk-greeter
+    - mate-applets
+    - mate-core
+    - mate-control-center
+    - mate-notification-daemon
+    - mate-settings-daemon
+    - mate-system-monitor
+    - mate-terminal
+    - mate-utils
+    - mozo
+    - parallel
+    - pkg-config
+    - pluma
+    - ppa-purge
+    - python-pip
+    - python3-pip
+    - python-wheel
+    - python3-wheel
+    - synaptic
+    - tree
+    - ubuntu-mate-lightdm-theme
+    - ubuntu-mate-themes
+    - ubuntu-mono
+    - ubuntu-release-upgrader-gtk
+    - unzip
+    - update-manager
+    - virtualbox-guest-dkms
+    - virtualbox-guest-x11
+    - virtualenvwrapper
+    - x11-xserver-utils
+    - xfonts-base
+    - xinit
+    - xserver-xorg
+    - xserver-xorg-core
+    - xterm
+    - zip
+
+- name: Install PyCharm Community edition as a snap
+  command: snap install pycharm-community --classic
+
+- name: Copy lightdm configuration
+  template:
+    src: ../files/lightdm.conf.j2
+    dest: /etc/lightdm/lightdm.conf
+    mode: 0644
+
+- name: Copy GTK greeter configuration and background images for lightdm
+  copy:
+    src: "../files/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: "lightdm-gtk-greeter.conf",
+        dest: "/etc/lightdm/lightdm-gtk-greeter.conf" }
+    - { src: "scott-rock-49527.jpg",
+        dest: "/usr/share/backgrounds/scott-rock-49527.jpg" }
+    - { src: "scott-rock-49527-lightdm.jpg",
+        dest: "/usr/share/backgrounds/scott-rock-49527-lightdm.jpg" }
+
+    
+...

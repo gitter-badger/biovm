@@ -1,0 +1,5 @@
+cat("INFO: Using https://cloud.r-project.org as the default CRAN repository. Set in ~/.Rprofile.\n\n")
+repo = getOption("repos") 
+repo["CRAN"] = "https://cloud.r-project.org" 
+options(repos = repo)
+rm(repo)
