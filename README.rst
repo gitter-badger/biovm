@@ -36,6 +36,8 @@ Features
 * General programming and System tools - gcc, make, git etc., 
 * Python, PERL and R language support.
 
+`More information`_
+
 Development notes
 -----------------
 This virtual machine is built using the :literal:`ubuntu/xenial64`
@@ -58,6 +60,7 @@ The Virtual machine is exported manually from VirtualBox (ova).
 .. links
    
 .. _Ansible: https://www.ansible.com/
+.. _More information: 
 .. _BioVM: https://vimal.io/biovm
 .. _BioPython: http://biopython.org/
 .. _Bedtools: https://bedtools.readthedocs.io
