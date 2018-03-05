@@ -9,17 +9,17 @@ to the VLinux_ live CD originally released in 2004.
    :alt: The menu contains a Bioinformatics category
 
 
-.. raw:: html
-	 	 
-	 <script src="https://gumroad.com/js/gumroad.js"></script>
+Get BioVM
+---------
 
-	 <a class="gumroad-button" href="https://gum.co/JXPmw" target="_blank">Get BioVM Free</a>
+.. raw:: html	 	 
 
-	 <a class="gumroad-button" href="https://gum.co/htNi" target="_blank">Get BioVM Personal</a>
+	 <a class="gumroad-button" href="https://gum.co/JXPmw" target="_blank">Get BioVM Free</a> |
+
+	 <a class="gumroad-button" href="https://gum.co/htNi" target="_blank">Get BioVM Personal</a> |
 
 	 <a class="gumroad-button" href="https://gum.co/wWqE" target="_blank">Get BioVM Business</a>
-
-
+	 
 Features
 --------
 
@@ -35,7 +35,6 @@ Features
 * Use Bioinformatics software distributed as Docker_ images.
 * General programming and System tools - gcc, make, git etc., 
 * Python, PERL and R language support.
-
 
 Development notes
 -----------------
