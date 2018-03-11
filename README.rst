@@ -8,21 +8,8 @@ to the VLinux_ live CD originally released in 2004.
 .. figure:: https://vimal.io/2018/images/biovm-menu.png
    :alt: The menu contains a Bioinformatics category
 
-
-Get BioVM
----------
-
-.. raw:: html	 	 
-
-	 <a class="gumroad-button" href="https://gum.co/JXPmw" target="_blank">Get BioVM Free</a> |
-
-	 <a class="gumroad-button" href="https://gum.co/htNi" target="_blank">Get BioVM Personal</a> |
-
-	 <a class="gumroad-button" href="https://gum.co/wWqE" target="_blank">Get BioVM Business</a>
-	 
 Features
 --------
-
 * A minimal installation of Ubuntu Linux
 * Pre-installed Bioinformatics software - Bedtools_, `Bowtie 2`_,
   BWA_, ClustalO_, Cutadapt_, EMBOSS_ (with the Jemboss and
@@ -37,6 +24,22 @@ Features
 * Python, PERL and R language support.
 
 `More information`_
+
+Download BioVM
+--------------
+Download the virtual machine (OVA format, 2GB) from the link below
+
+`Get BioVM <https://gum.co/JXPmw>`_
+
+Documentation
+-------------
+* Online (latest) - https://biovm.readthedocs.io
+* Within the VM - The "BioVM Help" shortcut on the desktop or
+  *Menu* --- *Bioinformatics* --- *BioVM Help*.
+
+  You can get the latest version of the documentation using the
+  command :literal:`update-biovm-help` in a terminal.
+  
 
 Development notes
 -----------------
@@ -54,7 +57,6 @@ role installs the core Bioinformatics software included in BioVM.
 Additional roles can be defined and then included in **setup.yml**.
 
 The Virtual machine is exported manually from VirtualBox (ova).
-
 
 
 .. links
