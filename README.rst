@@ -1,5 +1,9 @@
 BioVM - A virtual machine for Bioinformatics
 ============================================
+
+.. image:: https://badges.gitter.im/biovm/Lobby.svg
+   :alt: Join the chat at https://gitter.im/biovm/Lobby
+   :target: https://gitter.im/biovm/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 BioVM_ is a virtual machine based on
 Ubuntu MATE Linux 16.04 with pre-installed and
 pre-configured software for Bioinformatics. It is the successor
